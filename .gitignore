@@ -1,11 +1,16 @@
 # Unreal Generated Files
-*/Build
-*/Binaries
-*/DerivedDataCache
-*/Intermediate
-*/Saved
-BuildingEscape/Content/StarterContent/
+**/Build
+**/Binaries
+**/DerivedDataCache
+**/Intermediate
+**/Saved
+Content/StarterContent/
 *_BuiltData.uasset
+
+# VS Generated Files
+*.db
+*.db-shm
+*.db-wal
 
 # Prerequisites
 *.d
@@ -49,7 +54,6 @@ BuildingEscape/Content/StarterContent/
 
 # Others
 *.suo
-*.db
 *.ipch
 *.vxproj
 *.vcxproj
@@ -60,4 +64,3 @@ BuildingEscape/Content/StarterContent/
 *.filters
 *.user
 *.opendb
-
