@@ -20,8 +20,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	FHitResult GetFirstPhysicsBodyInReach();
-
 
 protected:
 	// Called when the game starts
@@ -43,4 +41,8 @@ private:
 	void SetupInputComponent();
 	// Return the first Actor within reach physics body
 	FHitResult GetFirstPhysicsBodyInReach() const;
+	// Return the Line Trace End
+	FVector GetPlayersReach() const;
+	// Get Player's viewpoint location
+	FVector GetPlayersLocation() const;
 };
