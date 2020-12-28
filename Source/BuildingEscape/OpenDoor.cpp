@@ -1,9 +1,12 @@
 // Baran Kaya 2020
 
-#include "OpenDoor.h"
+#include "OpenDoor.h" 	
+#include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
+
+#define OUT
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -23,17 +26,12 @@ void UOpenDoor::BeginPlay()
 
 	initialYaw = GetOwner()->GetActorRotation().Yaw;
 	currentYaw = initialYaw;
-	targetYaw += initialYaw;
+	OpenAngle += initialYaw;
 
 	// Check pressure plate
 	if (!PressurePlate) {
 		UE_LOG(LogTemp, Error, TEXT("%s object's Pressure Plate is Not Defined! (NULL)"), *GetOwner()->GetName());
 	}
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (!ActorThatOpens) {
-		UE_LOG(LogTemp, Error, TEXT("%s object's ActorThatOpens is Not Defined! (NULL)"), *GetOwner()->GetName());
-	}
-	
 }
 
 
@@ -42,14 +40,14 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Open door if overlaps
-	if (PressurePlate && ActorThatOpens && PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+	// Open door if the mass is greater or equal to MassToOpenDoor
+	if (PressurePlate && TotalMassOfActors() >= MassToOpenDoor) {
 		// Call Open Door Function
 		OpenDoor(DeltaTime);
 		// Get opened time
 		DoorLastOpened = GetWorld()->GetTimeSeconds();
 	}
-	else if (PressurePlate && ActorThatOpens && !PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+	else if (PressurePlate && TotalMassOfActors() < MassToOpenDoor) {
 		// Check time
 		if(DoorLastOpened + DoorCloseDelay <= GetWorld()->GetTimeSeconds())
 			// Call Close Door Function
@@ -58,23 +56,36 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 }
 
 void UOpenDoor::OpenDoor(float DeltaTime) {
-	currentYaw = FMath::Lerp(currentYaw, targetYaw, DeltaTime * DoorOpenSpeed);
+	// Calculate current yaw with linear int.
+	currentYaw = FMath::Lerp(currentYaw, OpenAngle, DeltaTime * DoorOpenSpeed);
+	// Get door's rotation
 	FRotator DoorOpen = GetOwner()->GetActorRotation();
+	// Set new yaw for the door
 	DoorOpen.Yaw = currentYaw;
 	GetOwner()->SetActorRotation(DoorOpen);
-	/*float currentYaw = GetOwner()->GetActorRotation().Yaw;
-	FRotator openDoor( 0.f, targetYaw, 0.f );
-	// Current Yaw, Target Yaw, 0-1
-	openDoor.Yaw = FMath::FInterpTo(currentYaw, targetYaw, DeltaTime, 2);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), openDoor.Yaw);
-	// Set new yaw
-	GetOwner()->SetActorRotation(openDoor);
-	//GetOwner()->SetActorRotation({ 0.f, GetOwner()->GetActorRotation().Yaw + 0.02f, 0.f });*/
 }
 
 void UOpenDoor::CloseDoor(float DeltaTime) {
+	// Calculate current yaw with linear int.
 	currentYaw = FMath::Lerp(currentYaw, initialYaw, DeltaTime * DoorCloseSpeed);
+	// Get door's rotation
 	FRotator DoorClose = GetOwner()->GetActorRotation();
+	// Set new yaw for the door
 	DoorClose.Yaw = currentYaw;
 	GetOwner()->SetActorRotation(DoorClose);
+}
+
+float UOpenDoor::TotalMassOfActors() const {
+	float TotalMass = 0.f;
+
+	// Find all overlapping actors
+	TArray<AActor*> OverlappingActors;
+	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
+
+	// Add up their masses
+	for (AActor* actor : OverlappingActors) {
+		TotalMass += actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+	}
+	
+	return TotalMass;
 }
