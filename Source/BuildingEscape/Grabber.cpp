@@ -59,14 +59,20 @@ void UGrabber::Grab() {
 	FHitResult HitResult = GetFirstPhysicsBodyInReach();
 	// Get component out of hit result
 	UPrimitiveComponent* GrabToComponent = HitResult.GetComponent();
+	// Get the actor that hit
+	AActor* ActorHit = HitResult.GetActor();
 	// If hit the actor
-	if (HitResult.GetActor()) {
+	if (ActorHit) {
+		// Check PhysicsHandle
+		if (!PhysicsHandle) return;
 		// Grab it
 		PhysicsHandle->GrabComponentAtLocation(GrabToComponent, NAME_None, GetPlayersReach());
 	}
 }
 
 void UGrabber::Release() {
+	// Check PhysicsHandle
+	if (!PhysicsHandle) return;
 	// Release the grabbed component
 	PhysicsHandle->ReleaseComponent();
 }
@@ -75,6 +81,8 @@ void UGrabber::Release() {
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// Check PhysicsHandle
+	if (!PhysicsHandle) return;
 	// If user grabbed something
 	if (PhysicsHandle->GrabbedComponent) {
 		// Move object we are holding

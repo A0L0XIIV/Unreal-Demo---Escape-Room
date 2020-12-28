@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
+#include "Components/AudioComponent.h"
 #include "Engine/TriggerVolume.h"
-
 #include "OpenDoor.generated.h"
 
 
@@ -23,6 +22,10 @@ public:
 	void OpenDoor(float DeltaTime);
 	void CloseDoor(float DeltaTime);
 	float TotalMassOfActors() const;
+	void FindAudioComponent();
+	// Wether the sound is played or not
+	bool OpenDoorSound = false;
+	bool CloseDoorSound = true;
 
 protected:
 	// Called when the game starts
@@ -39,11 +42,11 @@ private:
 
 	// Pressure Plate
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
-
+	ATriggerVolume* PressurePlate = nullptr;
 	// Pressure Plate trigger mass
 	UPROPERTY(EditAnywhere)
 	float MassToOpenDoor = 0.f;
+	float TotalMass = 0.f;
 
 	// Door close time parameters
 	float DoorLastOpened = 0.f;
@@ -56,4 +59,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DoorCloseSpeed = 2.f;
 
+	UPROPERTY()
+	UAudioComponent* AudioComponent = nullptr;
 };
