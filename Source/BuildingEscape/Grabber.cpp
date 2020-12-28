@@ -57,6 +57,7 @@ void UGrabber::SetupInputComponent() {
 
 void UGrabber::Grab() {
 	UE_LOG(LogTemp, Warning, TEXT("Grab that shit"));
+	GetFirstPhysicsBodyInReach();
 }
 
 void UGrabber::Release() {
