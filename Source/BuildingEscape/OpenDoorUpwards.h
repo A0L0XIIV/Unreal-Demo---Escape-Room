@@ -3,24 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "OpenDoor.h" 	
-
+#include "OpenDoor.h"
 #include "OpenDoorUpwards.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BUILDINGESCAPE_API UOpenDoorUpwards : public UActorComponent, public OpenDoor
+/**
+ * 
+ */
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class BUILDINGESCAPE_API UOpenDoorUpwards : public UOpenDoor
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UOpenDoorUpwards();
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void OpenDoor(float DeltaTime);
-	void CloseDoor(float DeltaTime);
+	void OpenDoor(float DeltaTime) override;
+	void CloseDoor(float DeltaTime) override;
 
 protected:
 	// Called when the game starts
@@ -34,5 +32,4 @@ private:
 	// Door max Z Position
 	UPROPERTY(EditAnywhere)
 	float OpenZPosition = 100.f;
-		
 };

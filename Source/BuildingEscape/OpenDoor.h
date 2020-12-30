@@ -19,8 +19,8 @@ public:
 	UOpenDoor();
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void OpenDoor(float DeltaTime);
-	void CloseDoor(float DeltaTime);
+	virtual void OpenDoor(float DeltaTime);
+	virtual void CloseDoor(float DeltaTime);
 	float TotalMassOfActors() const;
 	void FindAudioComponent();
 	// Wether the sound is played or not
@@ -30,6 +30,27 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	// Pressure Plate
+	UPROPERTY(EditAnywhere)
+		ATriggerVolume* PressurePlate = nullptr;
+	// Pressure Plate trigger mass
+	UPROPERTY(EditAnywhere)
+		float MassToOpenDoor = 0.f;
+	float TotalMass = 0.f;
+
+	// Door close time parameters
+	float DoorLastOpened = 0.f;
+	UPROPERTY(EditAnywhere)
+		float DoorCloseDelay = 2.f;
+
+	// Door open and close speeds
+	UPROPERTY(EditAnywhere)
+		float DoorOpenSpeed = 1.0f;
+	UPROPERTY(EditAnywhere)
+		float DoorCloseSpeed = 2.f;
+
+	UPROPERTY()
+		UAudioComponent* AudioComponent = nullptr;
 
 private:
 	// Door initial yaw degree
@@ -39,26 +60,4 @@ private:
 	// Door max yaw degree
 	UPROPERTY(EditAnywhere)
 	float OpenAngle = 90.f;
-
-	// Pressure Plate
-	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate = nullptr;
-	// Pressure Plate trigger mass
-	UPROPERTY(EditAnywhere)
-	float MassToOpenDoor = 0.f;
-	float TotalMass = 0.f;
-
-	// Door close time parameters
-	float DoorLastOpened = 0.f;
-	UPROPERTY(EditAnywhere)
-	float DoorCloseDelay = 2.f;
-
-	// Door open and close speeds
-	UPROPERTY(EditAnywhere)
-	float DoorOpenSpeed = 1.0f;
-	UPROPERTY(EditAnywhere)
-	float DoorCloseSpeed = 2.f;
-
-	UPROPERTY()
-	UAudioComponent* AudioComponent = nullptr;
 };
